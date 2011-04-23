@@ -31,8 +31,8 @@ jerk( function( j ) {
     message.say("nila: That's a horrible joke. Get back to work!" )
   });
 
-  j.watch_for(//,);
-  j.watch_for(/history/i, function(message) {
+  j.watch_for(/^book:(.*)/, function(message){});
+  j.watch_for(/^history/i, function(message) {
   });
   j.watch_for(/.*/, function(message){
     logger.save(message);
