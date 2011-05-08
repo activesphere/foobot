@@ -46,9 +46,9 @@ var userJoin = function(user) {
 
 
 var options =
-  { server: 'vervet.foonetic.net'
-  , nick: 'FoobotPlusPlus'
-  , channels: [ '#foobot' ]
+  { server: 'irc.foonetic.net'
+  , nick: 'Foobot'
+  , channels: [ '#activesphere' ]
   };
 
 jerk( function( j ) {
