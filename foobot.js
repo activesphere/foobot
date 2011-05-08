@@ -1,4 +1,5 @@
 var jerk = require( 'jerk' ), sys=require('sys'), redis = require("redis"), util=require('util');
+var plugins = require('./plugins');
 
 var redis_client = redis.createClient();
 redis_client.on("error", function (err) {
@@ -64,6 +65,9 @@ jerk( function( j ) {
   j.user_leave(function(message) {
     userLeave(message.user);
     new Activity("leave").save(message);
+  });
+  plugins.messageWatchers.forEach(function(plugin) {
+    j.watch_for(plugin.pattern, plugin.callback);
   });
   j.watch_for(/.*/, function(message){
     new Activity("message").save(message);
