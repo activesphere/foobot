@@ -28,15 +28,10 @@ var userJoin = function(user) {
     redis_client.llen("all.activities", function(e, currActivityCount){
       sys.puts("Counts: " + replies[1] + " - " + currActivityCount );
       redis_client.lrange("all.activities", replies[1], currActivityCount, function(e, activities) {
-        if(activities.length > 0) {
-          user.say("You missed these messages");
-        }
         activities.forEach(function (act, i) {
           act = JSON.parse(act);
-          sys.puts("Act(" + i + "): " + act);
-          sys.puts(act.type + " >> " + act["type"]);
           if(act.type == "message") {
-            user.say(act.args.text[0]);
+            user.say(act.args.user + ": " + act.args.text[0]);
           }
         });
       });
