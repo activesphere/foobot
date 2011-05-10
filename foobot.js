@@ -26,8 +26,13 @@ var userLeave = function(user){
 var userJoin = function(user) {
   var lastLeavingTime = redis_client.hmget("user.leave." + user.user.nick, 'time', 'msgIndex', function(err, replies) {
     redis_client.llen("all.activities", function(e, currActivityCount){
+      var startIdx = replies[1];
+      var endIdx = currActivityCount;
       sys.puts("Counts: " + replies[1] + " - " + currActivityCount );
-      redis_client.lrange("all.activities", replies[1], currActivityCount, function(e, activities) {
+      if (endIdx - startIdx > 20 ) {
+        startIdx = endIdx - 20;
+      }
+      redis_client.lrange("all.activities", startIdx, endIdx, function(e, activities) {
         activities.forEach(function (act, i) {
           act = JSON.parse(act);
           if(act.type == "message") {
@@ -42,8 +47,8 @@ var userJoin = function(user) {
 
 var options =
   { server: 'irc.foonetic.net'
-  , nick: 'Foobot'
-  , channels: [ '#activesphere' ]
+  , nick: 'FoobotPlusPlus'
+  , channels: [ '#foobot' ]
   };
 
 jerk( function( j ) {
@@ -61,6 +66,7 @@ jerk( function( j ) {
     userLeave(message.user);
     new Activity("leave").save(message);
   });
+
   plugins.messageWatchers.forEach(function(plugin) {
     j.watch_for(plugin.pattern, plugin.callback);
   });
