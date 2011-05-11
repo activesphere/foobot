@@ -51,7 +51,7 @@ var options =
   , channels: [ '#foobot' ]
   };
 
-jerk( function( j ) {
+var bot = jerk( function( j ) {
   j.watch_for( /^Good joke nila$/i, function( message ) {
     sys.puts("Message from: " + message.user);
     message.say("nila: That's a horrible joke. Get back to work!" )
@@ -70,7 +70,12 @@ jerk( function( j ) {
   plugins.messageWatchers.forEach(function(plugin) {
     j.watch_for(plugin.pattern, plugin.callback);
   });
+
   j.watch_for(/.*/, function(message){
     new Activity("message").save(message);
   });
 }).connect(options);
+
+plugins.daemonPlugins.forEach(function(p){ 
+  p.init(bot);
+});
