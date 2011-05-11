@@ -1,5 +1,5 @@
 var EventEmitter = require('events').EventEmitter;
-var sys = require('sys'), util = require('util');
+var sys = require('sys'), util = require('util'), parser=require('./chronic_date.js');
 
 var ReminderService = function(redis) {
   this.redis = redis;
@@ -12,15 +12,29 @@ var ReminderService = function(redis) {
 ReminderService.prototype = new EventEmitter
 
 ReminderService.prototype.addTestCases = function(){
-  this.add({when: 60, about: "2.1st thing to do is this", who: "harsu"});
-  this.add({when: 30, about: "first thing to do is this", who: "harsu"});
-  this.add({when: 90, about: "3rd thing to do is this", who: "harsu"});
-  this.add({when: 58, about: "2.0th thing to do is this", who: "harsu"});
-  this.add({when: 120, about: "last thing to do is this", who: "harsu"});
+  // this.add({when: 60, about: "2.1st thing to do is this", who: "harsu"});
+  // this.add({when: 30, about: "first thing to do is this", who: "harsu"});
+  // this.add({when: 90, about: "3rd thing to do is this", who: "harsu"});
+  // this.add({when: 58, about: "2.0th thing to do is this", who: "harsu"});
+  // this.add({when: 120, about: "last thing to do is this", who: "harsu"});
 };
 
 ReminderService.prototype.add = function(remind) {
   this.redis.sadd("all.reminders", JSON.stringify(remind));
+};
+
+ReminderService.prototype.parse = function(message) {  
+  var text = message.text[0];
+  var matches = text.match(/remind:\s?((\w+)\s+about\s+)?(\w+)\s+in\s+(.*)/)
+  var reminder;
+  if (matches && matches.length == 5) {
+    var who = matches[2] == null ? message.user : matches[2];
+    reminder = {about: matches[3], when: parser(matches[4]), who: who};
+    sys.log("Reminder: " + util.inspect(reminder));
+    this.add(reminder);
+  } else {
+    message.say("Sorry, didn't understand that");
+  }
 };
 
 ReminderService.prototype.init = function(bot) {
@@ -44,27 +58,19 @@ var copy = function(reminder) {
 
 var updateReminders = function(redis, notifier, interval) {
   var handleReminders = function(err, reminders) {
-    var expired = [], updated=[];
+    var expired = [];
     reminders.forEach(function(reminder, idx) {
       var reminder = JSON.parse(reminder);
-      if (reminder.when - interval <= 0) {
+      sys.puts("Reminder expires: " + Date.parse(reminder.when) + ">> " + Date.parse(new Date()) + "::" + Date.parse(reminder.when) < Date.parse(new Date()));
+      if (Date.parse(reminder.when) < Date.parse(new Date())) {
         sys.puts("expired");
         expired.push(reminder);
         notifier.emit('due', reminder);
-      } else {
-        var oldReminder = copy(reminder);
-        reminder.when = reminder.when - interval;
-        updated.push({old: oldReminder, neww: reminder});
       }
     });
     expired.forEach(function(e) {
       sys.puts("removing: " + JSON.stringify(e));
       redis.srem("all.reminders", JSON.stringify(e), function(err) {});
-    });
-    updated.forEach(function(obj) {
-      redis.srem("all.reminders", JSON.stringify(obj.old), function(e) {
-        redis.sadd("all.reminders", JSON.stringify(obj.neww));
-      });
     });
   };
   getReminders(redis, handleReminders);

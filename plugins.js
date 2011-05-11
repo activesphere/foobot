@@ -24,6 +24,11 @@ var quit = function(message) {
   process.exit();
 };
 
+var reminders = function(message) {
+  if(reminderService != null) {
+    reminderService.parse(message);
+  }
+};
 
 var Foobot = new (function(){
   var self = this;
@@ -31,7 +36,7 @@ var Foobot = new (function(){
     self._messageWatchers = [];
     self._daemonPlugins = [];
     self._messageWatchers.push({pattern: /^ifconfig$/i, callback: ifconfig});
-    self._messageWatchers.push({pattern: /^remind me/, callback: reminderService.add});
+    self._messageWatchers.push({pattern: /^remind:/, callback: reminders});
     self._daemonPlugins.push(reminderService);
     self._messageWatchers.push({pattern: /^quit$/i, callback: quit});
   };

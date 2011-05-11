@@ -17,7 +17,7 @@ var Chronic = new (function(){
   };
   var formats = [{aliases: ["mins", "minutes"], callback: minutes}, {aliases: ["hours", "hrs"], callback: hours}, {aliases: ["days"], callback: days}];
   this.parse = function(str) {
-    var timeStr = str.split("in ").pop();
+    var timeStr = str;
     var date = new Date();
     formats.forEach(function(format) {
       format.aliases.forEach(function(alias) {
