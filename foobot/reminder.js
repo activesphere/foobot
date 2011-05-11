@@ -1,5 +1,5 @@
 var EventEmitter = require('events').EventEmitter;
-var sys = require('sys'), util = require('util'), parser=require('./chronic_date.js');
+var sys = require('sys'), util = require('util'), parser=require('./chronic_date.js'), User = require('./user.js');
 
 var ReminderService = function(redis) {
   this.redis = redis;
@@ -12,11 +12,12 @@ var ReminderService = function(redis) {
 ReminderService.prototype = new EventEmitter
 
 ReminderService.prototype.addTestCases = function(){
-  // this.add({when: 60, about: "2.1st thing to do is this", who: "harsu"});
-  // this.add({when: 30, about: "first thing to do is this", who: "harsu"});
-  // this.add({when: 90, about: "3rd thing to do is this", who: "harsu"});
-  // this.add({when: 58, about: "2.0th thing to do is this", who: "harsu"});
-  // this.add({when: 120, about: "last thing to do is this", who: "harsu"});
+  // var in = function(n){ var dt= new Date(); dt.getTime() + (n*60*1000); return dt;};
+  // this.add({when: in(60), about: "2.1st thing to do is this", who: "harsu"});
+  // this.add({when: in(30), about: "first thing to do is this", who: "harsu"});
+  // this.add({when: in(90), about: "3rd thing to do is this", who: "harsu"});
+  // this.add({when: in(58), about: "2.0th thing to do is this", who: "harsu"});
+  // this.add({when: in(120), about: "last thing to do is this", who: "harsu"});
 };
 
 ReminderService.prototype.add = function(remind) {
@@ -41,9 +42,10 @@ ReminderService.prototype.init = function(bot) {
   this.bot = bot;
 };
 
-ReminderService.prototype.due = function(reminder) {
+ReminderService.prototype.due = function(reminder, redis) {
   if (this.bot != null) {
-    this.bot.bot.privmsg(reminder.who, reminder.about, true);
+    var user = new User(reminder.who);
+    user.notify(reminder.about, redis, this.bot);
   }
 };
 
@@ -65,7 +67,7 @@ var updateReminders = function(redis, notifier, interval) {
       if (Date.parse(reminder.when) < Date.parse(new Date())) {
         sys.puts("expired");
         expired.push(reminder);
-        notifier.emit('due', reminder);
+        notifier.emit('due', reminder, redis);
       }
     });
     expired.forEach(function(e) {

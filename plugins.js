@@ -18,7 +18,7 @@ var ifconfig = function(message) {
 var reminderService = new ReminderService(redis_client);
 reminderService.on("due", function(reminder) {
   sys.puts("a reminder is due: " + util.inspect(reminder));
-  reminderService.due(reminder);
+  reminderService.due(reminder, redis_client);
 });
 var quit = function(message) {
   process.exit();

@@ -1,5 +1,7 @@
 var jerk = require( 'jerk' ), sys=require('sys'), redis = require("redis"), util=require('util');
 var plugins = require('./plugins');
+var EventEmitter = require('events').EventEmitter;
+var User = require('./foobot/user.js');
 
 var redis_client = redis.createClient();
 redis_client.on("error", function (err) {
@@ -19,7 +21,9 @@ Activity.prototype.save = function(message) {
 
 var userLeave = function(user){
   redis_client.llen("all.activities", function(e, activityCount) {
-    redis_client.hmset("user.leave." + user.nick, 'time', new Date().toString(), 'msgIndex', activityCount);
+    redis_client.hmset("user.leave." + user.nick, 'time', new Date().toString(), 'msgIndex', activityCount, function(e) { 
+      new User(user.nick).offline(redis_client);
+    });
   });
 };
 
@@ -45,10 +49,19 @@ var userJoin = function(user) {
 };
 
 
+var Events = function(){
+};
+
+Events.prototype = new EventEmitter;
+
+
+var events = new Events();
+
 var options =
   { server: 'vervet.foonetic.net'
   , nick: 'FoobotPlusPlus'
   , channels: [ '#foobot' ]
+  , delayAfterConnect: 3000
   };
 
 var bot = jerk( function( j ) {
@@ -60,6 +73,7 @@ var bot = jerk( function( j ) {
   j.user_join(function(message) {
     userJoin(message);
     new Activity("join").save(message);
+    events.emit("join", new User(message.user.nick));
   });
 
   j.user_leave(function(message) {
@@ -79,3 +93,9 @@ var bot = jerk( function( j ) {
 plugins.daemonPlugins.forEach(function(p){ 
   p.init(bot);
 });
+
+events.on("join", function(user) {
+  sys.log("User " + util.inspect(user) + " has joined");
+  user.joined(redis_client, bot);
+});
+
