@@ -26,11 +26,11 @@ ReminderService.prototype.add = function(remind) {
 
 ReminderService.prototype.parse = function(message) {  
   var text = message.text[0];
-  var matches = text.match(/remind:\s?((\w+)\s+about\s+)?(\w+)\s+in\s+(.*)/)
+  var matches = text.match(/remind:\s?((\w+)\s+about\s+)?((\w+\s?)+)in\s+(.*)/)
   var reminder;
-  if (matches && matches.length == 5) {
+  if (matches && matches.length == 6) {
     var who = matches[2] == null ? message.user : matches[2];
-    reminder = {about: matches[3], when: parser(matches[4]), who: who};
+    reminder = {about: matches[3], when: parser(matches[5]), who: who};
     sys.log("Reminder: " + util.inspect(reminder));
     this.add(reminder);
   } else {

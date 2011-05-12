@@ -51,7 +51,7 @@ User.prototype.sendInitMessages = function(redis, bot) {
     joinMessages.forEach(function(message) {
       self.sendMessage(message, bot);
     });
-    
+    redis.del("user.join.messages." + self.user());
   });
 };
 

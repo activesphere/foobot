@@ -85,7 +85,7 @@ var bot = jerk( function( j ) {
     j.watch_for(plugin.pattern, plugin.callback);
   });
 
-  j.watch_for(/.*/, function(message){
+  j.watch_for(/.*/, function(message) {
     new Activity("message").save(message);
   });
 }).connect(options);
