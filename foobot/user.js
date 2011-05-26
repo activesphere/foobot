@@ -46,7 +46,6 @@ User.prototype.notify = function(message, redis, bot) {
 
 User.prototype.sendInitMessages = function(redis, bot) {
   var self = this;
-  // TODO: improve the redis access code
   redis.lrange("user.join.messages." + this.user(), 0, -1, function(e, joinMessages) {
     joinMessages.forEach(function(message) {
       self.sendMessage(message, bot);

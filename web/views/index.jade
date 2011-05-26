@@ -1,0 +1,9 @@
+h1 Foobot
+#container
+  #messages
+    - messages.forEach(function(message) {
+      - var message = JSON.parse(message);
+      - if(message.type == "message")
+        .message= message.args.text
+    - });
+    != paginationLinks("/", messages, currentPage);

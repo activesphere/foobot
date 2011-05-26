@@ -1,5 +1,5 @@
 var jerk = require( 'jerk' ), sys=require('sys'), redis = require("redis"), util=require('util');
-var plugins = require('./plugins');
+var plugins = require('./foobot/plugins');
 var EventEmitter = require('events').EventEmitter;
 var User = require('./foobot/user.js');
 
