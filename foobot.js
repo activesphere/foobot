@@ -61,7 +61,7 @@ var options =
   { server: 'vervet.foonetic.net'
   , nick: 'FoobotPlusPlus'
   , channels: [ '#foobot' ]
-  , delayAfterConnect: 3000
+  , delayAfterConnect: 5000
   };
 
 var bot = jerk( function( j ) {

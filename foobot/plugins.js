@@ -1,6 +1,6 @@
 var exec = require('child_process').exec, sys = require('sys'), util=require('util');
 var redisLib = require('redis');
-var ReminderService = require('./reminder.js'), ExpenseTracker = require('./expenses.js');
+var ReminderService = require('./reminder.js'), ExpenseTracker = require('./expenses.js'), twitter = require('./twitter');
 var pastie=require('./pastie.js'), gist=require('./gist.js');
 var redis_client = redisLib.createClient();
 
@@ -43,9 +43,10 @@ var Foobot = new (function(){
 //    self._messageWatchers.push({pattern: /^expense:/, callback: expense});
     self._messageWatchers.push({pattern: /^remind:/, callback: reminders});
     self._messageWatchers.push({pattern: /^pastie:/, callback: pastie});
+    self._messageWatchers.push({pattern: /^tweet:/, callback: twitter.tweet});
     self._messageWatchers.push({pattern: /^gist:/, callback: gist});
     self._daemonPlugins.push(reminderService);
-    self._messageWatchers.push({pattern: /^quit$/i, callback: function(message){
+    self._messageWatchers.push({pattern: /^quit$/i, callback: function(message) {
       process.quit();
     }});
   };
