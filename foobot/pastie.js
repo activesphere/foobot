@@ -18,7 +18,7 @@ var pastieIt = function(text, isPrivate, callback) {
     response.on('data', function(chunk) {
       console.log("body: " + chunk);
     });
-    response.on('end', function() {
+      response.on('end', function() {
     });
   });
 

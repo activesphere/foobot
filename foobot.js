@@ -1,9 +1,11 @@
-var jerk = require( 'jerk' ), sys=require('sys'), redis = require("redis"), util=require('util');
+var jerk = require( 'jerk' ), sys=require('sys'), redis = require("redis"), util = require('util');
 var plugins = require('./foobot/plugins');
+
 var EventEmitter = require('events').EventEmitter;
 var User = require('./foobot/user.js');
 
 var redis_client = redis.createClient();
+
 redis_client.on("error", function (err) {
   console.log("Error " + err);
 });
@@ -11,7 +13,6 @@ redis_client.on("error", function (err) {
 var Activity = function(type){
   this.client = redis_client;
   this.type = type;
-  sys.puts('Redis client: ' + (redis_client == null));
 };
 
 Activity.prototype.save = function(message) {
@@ -65,10 +66,6 @@ var options =
   };
 
 var bot = jerk( function( j ) {
-  j.watch_for( /^Good joke nila$/i, function( message ) {
-    sys.puts("Message from: " + message.user);
-    message.say("nila: That's a horrible joke. Get back to work!" )
-  });
 
   j.user_join(function(message) {
     userJoin(message);
@@ -95,7 +92,6 @@ plugins.daemonPlugins.forEach(function(p){
 });
 
 events.on("join", function(user) {
-  sys.log("User " + util.inspect(user) + " has joined");
   user.joined(redis_client, bot);
 });
 
