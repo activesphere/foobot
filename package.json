@@ -8,11 +8,12 @@
     "url": "git@github.com:activesphere/foobot.git"
   },
   "main": "foobot.js",
-  "engine": "node 0.5.0",
+  "engine": "node 0.4.8",
   "dependencies": {
       "socket.io": "0.7.6",
       "jerk": "1.1.15",
       "express": "2.4.6",
+      "jade": "0.15.3",
       "express-helpers": "0.1.0",
       "evented-twitter": "0.2.0",
       "coloured": "0.2.0",
