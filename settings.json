@@ -1,0 +1,31 @@
+{
+  "redis": {
+    "host":"icefish.redistogo.com",
+    "port": 9342,
+    "auth": "32908ec15e9fbd8914053893e2470b7a"
+  },
+  "irc": { 
+    "server": "irc.foonetic.net",
+    "nick": "FoobotPlusPlus",
+    "channels": [ "#activesphere" ], 
+    "delayAfterConnect": 5000,
+    "admin_users" : ["nikhil", "sreeix", "nila", "niket"]
+  },
+  "twitter":{
+    "username": "foobarfoo", 
+    "password": "foobar",
+    "oauth": {
+      "consumerKey": "VlFKJXEMBQ4i3KAUjBtDzQ",
+      "consumerSecret": "hI9tjFLkoypCm1KoaGtRWjLl8TxdqEzwdooOhJ8qY",
+      "accessToken": "305535380-5KATa7ECFybdydZDgp2nRNtBk0BWDdwaM31zAkEG",
+      "accessTokenSecret": "T5b36ZkC21CuO9JHfE5FMUTTpl4jTPanQp7tfCI68", 
+      "requestTokenURL": "http://api.twitter.com/oauth/request_token", 
+      "accessTokenURL": "http://api.twitter.com/oauth/access_token",
+      "authorizeURL": "https://api.twitter.com/oauth/authorize",
+      "auth": "oauth"
+    }, 
+    "user_id":"305535380",
+    "screen_name": "foobotfoo"
+  }
+  
+}

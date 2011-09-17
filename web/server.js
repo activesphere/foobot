@@ -1,6 +1,7 @@
 var app = require('express').createServer();
 var redis = require("redis"), util = require('util'), sys=require('sys');
 var paginate = require("./paginate");
+var Settings = require('./settings');
 
 app.configure(function(){
   app.set('views', __dirname + '/views');

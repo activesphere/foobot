@@ -1,19 +1,15 @@
 var exec = require('child_process').exec, sys = require('sys'), util=require('util');
-var redisLib = require('redis');
 var ReminderService = require('./reminder.js'), ExpenseTracker = require('./expenses.js'), twitter = require('./twitter');
 var pastie=require('./pastie.js'), gist=require('./gist.js');
-var redis_client = redisLib.createClient();
+var settings = require('./settings.js')('./settings.json')
+var redis_client = require('redis').createClient(settings.redis.port, settings.redis.host, settings.redis.options);
+if(!!settings.redis.auth) {
+  redis_client.auth(settings.redis.auth);
+}
 
 redis_client.on("error", function (err) {
   console.log("Error " + err);
 });
-
-var ifconfig = function(message) {
-  exec("ifconfig", function(error, stdout, stderr) {
-    message.say(stdout);
-  });
-};
-
 
 var reminderService = new ReminderService(redis_client);
 reminderService.on("due", function(reminder) {
@@ -27,20 +23,11 @@ var reminders = function(message) {
   }
 };
 
-// var expenseTracker = new ExpenseTracker(redis_client);
-// var expense = function(message) {
-//   if(expenseTracker != null) {
-//     expenseTracker.parseExpense(message);
-//   }
-// };
-
 var Foobot = new (function(){
   var self = this;
   this.loadPlugins = function() {
     self._messageWatchers = [];
     self._daemonPlugins = [];
-    self._messageWatchers.push({pattern: /^ifconfig$/i, callback: ifconfig});
-//    self._messageWatchers.push({pattern: /^expense:/, callback: expense});
     self._messageWatchers.push({pattern: /^remind:/, callback: reminders});
     self._messageWatchers.push({pattern: /^pastie:/, callback: pastie});
     self._messageWatchers.push({pattern: /^tweet:/, callback: twitter.tweet});

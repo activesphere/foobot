@@ -4,7 +4,12 @@ var plugins = require('./foobot/plugins');
 var EventEmitter = require('events').EventEmitter;
 var User = require('./foobot/user.js');
 
-var redis_client = redis.createClient();
+var settings = require('./foobot/settings.js')('./settings.json');
+
+var redis_client = redis.createClient(settings.redis.port, settings.redis.host, settings.redis.options);
+if(!!settings.redis.auth) {
+  redis_client.auth(settings.redis.auth);
+}
 
 redis_client.on("error", function (err) {
   console.log("Error " + err);
@@ -58,15 +63,7 @@ Events.prototype = new EventEmitter;
 
 var events = new Events();
 
-var options =
-  { server: 'vervet.foonetic.net'
-  , nick: 'FoobotPlusPlus'
-  , channels: [ '#foobot' ]
-  , delayAfterConnect: 5000
-  };
-
 var bot = jerk( function( j ) {
-
   j.user_join(function(message) {
     userJoin(message);
     new Activity("join").save(message);
@@ -85,7 +82,7 @@ var bot = jerk( function( j ) {
   j.watch_for(/.*/, function(message) {
     new Activity("message").save(message);
   });
-}).connect(options);
+}).connect(settings.irc);
 
 plugins.daemonPlugins.forEach(function(p){ 
   p.init(bot);

@@ -1,4 +1,8 @@
-var helpers = require('express-helpers'), urllib=require('url'), qs = require("querystring"), sys=require("sys"), util=require("util");
+var helpers = require('express-helpers'), 
+    urllib = require('url'), 
+    qs = require("querystring"), 
+    sys = require("sys"), 
+    util = require("util");
 
 var urlFor = function(url, params) {
   if (!url.query) {
@@ -15,6 +19,7 @@ var paginationLinks = function(link, collection, currentPage) {
   var perPage = 10;
   var totalPages = parseInt(collection.length/perPage + 1);
   sys.log("Total page: " + totalPages);
+
   if (totalPages == 1) {
     return "";
   }

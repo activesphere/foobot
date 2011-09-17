@@ -1,6 +1,7 @@
-var sys=require('sys');
+var sys = require('sys');
+var settings = require('./settings.js')(__dirname+"/../settings.json");
 
-var _users = ["nikhil", "sreeix", "nila", "suresh", "harsu"];
+var _users = settings.irc.admin_users
 
 User = function(ircUser) {
   this.ircUser = ircUser;

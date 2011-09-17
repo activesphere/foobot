@@ -15,8 +15,6 @@ var gistIt = function(text, isPrivate, callback) {
   }
   var fileName = matches[1], extension=matches[3], contents=matches[4];
   var payLoad = qs.stringify({"login" : login, "token" : token, "file_name[gistfile1]" : fileName, "action_button": "private", "file_ext[gistfile1]": extension, "file_contents[gistfile1]" : contents});
-  console.log("" + payLoad);
-  console.log("Content-Length:" + payLoad.length);
   var request = https.request({host: 'gist.github.com', port:443, method: 'POST', path: '/gists', headers: {"Content-Type" : "application/x-www-form-urlencoded", "Content-Length" : payLoad.length}});
   console.log("Content-Type: " + request.getHeader("Content-Type"));
   request.on('response', function(response) {
@@ -47,8 +45,4 @@ var gist = function(message) {
   });
 };
 
-// gistIt("gist: foo.rb puts \"Hello World\"\ndef some\n\tputs \"foo\"\nend", true, function(url) {
-//   console.log("Url: " + url);
-// });
-
-module.exports=gist
+module.exports = gist

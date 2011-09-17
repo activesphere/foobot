@@ -1,5 +1,7 @@
-var OAuth = require('oauth').OAuth, fs=require('fs');
-var config = JSON.parse( fs.readFileSync(__dirname + '/creds.json') );
+var OAuth = require('oauth').OAuth;
+var fs = require('fs');
+var settings = require('./settings.js')(__dirname+"/../settings.json");
+var config = settings.twitter; 
 var oauth = config.oauth;
 
 console.warn(oauth);
@@ -24,25 +26,22 @@ oa.getOAuthRequestToken(function(err, oauth_token, oauth_token_secret, results){
       console.warn('\nTry again: ');
     }
     console.warn('Received PIN: ' + d);
-    oa.getOAuthAccessToken(oauth_token
-                           , oauth_token_secret
-                           , d
-                           , function(err, oauth_access_token, oauth_access_token_secret, results2) {
-                             if(err) throw err;
+    oa.getOAuthAccessToken(oauth_token, oauth_token_secret, d, function(err, oauth_access_token, oauth_access_token_secret, results2) {
+      if(err) throw err;
 
-                             console.log(results2);
+      console.log(results2);
 
-                             if(results2) {
-                               config.user_id = results2.user_id;
-                               config.screen_name = results2.screen_name;
-                             }
+      if(results2) {
+        config.user_id = results2.user_id;
+        config.screen_name = results2.screen_name;
+      }
 
-                             oauth.accessToken = oauth_access_token;
-                             oauth.accessTokenSecret = oauth_access_token_secret;
-
-                             fs.writeFileSync(__dirname + '/creds.json', JSON.stringify(config));
-                             stdin.destroySoon();
-                           });
+      oauth.accessToken = oauth_access_token;
+      oauth.accessTokenSecret = oauth_access_token_secret;
+      console.log("Copy paste this into settings.json");
+      console.log(JSON.stringify(config));
+      stdin.destroySoon();
+    });
   });
 });
 

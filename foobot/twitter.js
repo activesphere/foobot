@@ -1,12 +1,15 @@
-var sys = require('sys'), util=require('util'), fs=require('fs');
+var sys = require('sys');
+
 var Twitter = require('evented-twitter').Twitter;
-var creds = JSON.parse(fs.readFileSync('./foobot/creds.json')) ,oauth = creds.oauth;
+// var creds = JSON.parse(fs.readFileSync('./foobot/creds.json')) 
+var settings = require(__dirname+'/../foobot/settings.js')('./settings.json');
+
+var oauth = settings.twitter.oauth;
 var shorten = require("./shorten_url.js");
 
-creds.oauth.auth = 'oauth';
-console.log(util.inspect(creds));
+console.log(sys.inspect(oauth));
 
-var t = new Twitter(creds);
+var t = new Twitter(oauth);
 
 var tweet = function(message) {
   var tweetText = message.text[0].match(/^tweet:(.*)/)[1];
