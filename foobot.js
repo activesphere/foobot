@@ -4,6 +4,9 @@ var plugins = require('./foobot/plugins');
 var EventEmitter = require('events').EventEmitter;
 var User = require('./foobot/user.js');
 
+var app = require('express').createServer();
+var paginate = require("./paginate");
+
 var settings = require('./foobot/settings.js')('./settings.json');
 
 var redis_client = redis.createClient(settings.redis.port, settings.redis.host, settings.redis.options);
@@ -45,7 +48,7 @@ var userJoin = function(user) {
       redis_client.lrange("all.activities", startIdx, endIdx, function(e, activities) {
         activities.forEach(function (act, i) {
           act = JSON.parse(act);
-          if(act.type == "message") {
+          if(act.type === "message") {
             user.say(act.args.user + ": " + act.args.text[0]);
           }
         });
@@ -59,8 +62,6 @@ var Events = function(){
 };
 
 Events.prototype = new EventEmitter;
-
-
 var events = new Events();
 
 var bot = jerk( function( j ) {
@@ -91,4 +92,24 @@ plugins.daemonPlugins.forEach(function(p){
 events.on("join", function(user) {
   user.joined(redis_client, bot);
 });
+
+app.helpers({paginationLinks: paginate.paginationLinks});
+
+var renderMessages = function(req, res) {
+  var start, end = paginate.rangeFor(req.query);
+  redis_client.lrange('all.activities', start, end, function(e, messages) {
+    res.render('index.jade', { title: 'My Site', messages: messages.reverse(), currentPage: req.query.page, layout:false});
+  });
+};
+
+app.get('/', function(req, res){
+  renderMessages(req, res);
+});
+app.listen(9999);
+console.log("started web server on 9999");
+ 
+
+
+
+
 

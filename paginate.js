@@ -16,7 +16,7 @@ var paginationLinks = function(link, collection, currentPage) {
   var url = urllib.parse(link);
   currentPage = (currentPage == null) ? 0 : currentPage;
   currentPage = parseInt(currentPage);
-  var perPage = 10;
+  var perPage = 100;
   var totalPages = parseInt(collection.length/perPage + 1);
   sys.log("Total page: " + totalPages);
 
@@ -24,9 +24,10 @@ var paginationLinks = function(link, collection, currentPage) {
     return "";
   }
   var links = "", query= url.query ? url.query : {};
+
   if (currentPage != 0) {
     query.page = null;
-    links += "<a href=" + urlFor(url, query) + ">First</a>";
+    links += "<a href=" + urlFor(url, query) + ">First</a> &nbsp; &nbsp;";
 
     query.page = currentPage - 1;
     links += "<a href=" + urlFor(url, query) + ">Previous</a>";
@@ -34,7 +35,7 @@ var paginationLinks = function(link, collection, currentPage) {
 
   if(currentPage < totalPages) {
     query.page = currentPage + 1;
-    links += "<a href=" + urlFor(url, query) + ">Next</a>";
+    links += "<a href=" + urlFor(url, query) + ">Next</a>&nbsp;&nbsp;";
 
     query.page = totalPages;
     links += "<a href=" + urlFor(url, query) + ">Last</a>";
